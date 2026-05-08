@@ -81,6 +81,8 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --font-inter: 'Inter', system-ui, sans-serif;
+  --font-space-grotesk: 'Space Grotesk', sans-serif;
 }
 
 .dark {
@@ -127,4 +129,11 @@
   html {
     @apply font-sans;
   }
+}
+body {
+  font-family: var(--font-inter);
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-space-grotesk);
 }
