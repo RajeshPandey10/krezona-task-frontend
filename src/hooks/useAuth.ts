@@ -2,6 +2,7 @@
 
 import { useAuthStore } from '@/store/auth.store';
 import { authService } from '@/services/auth.service';
+import api from '@/lib/axios';
 import { toast } from 'sonner';
 
 export const useAuth = () => {
@@ -10,7 +11,13 @@ export const useAuth = () => {
   const signIn = async (email: string, password: string) => {
     try {
       const response = await authService.login(email, password);
-      login(response.access_token, response.user);
+      const token = response?.access_token || response?.token || response?.accessToken || response?.data?.access_token;
+      const user = response?.user || response?.data || response;
+      if (token) {
+        localStorage.setItem('access_token', token);
+        api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      }
+      login(token, user as any);
       toast.success('Login successful!');
       return response;
     } catch (error: any) {

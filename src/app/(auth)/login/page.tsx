@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginForm } from "@/schemas";
 import { useAuth } from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,6 +16,7 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const { signIn } = useAuth();
+  const router = useRouter();
 
   const {
     register,
@@ -33,7 +35,11 @@ export default function LoginPage() {
         window.location.href = "/dashboard";
       }, 1200);
     } catch (err) {
-      // Error already handled in hook
+      const message = (err as any)?.response?.data?.message || "";
+      if (message.toLowerCase().includes("verify your email")) {
+        sessionStorage.setItem("pending_password", data.password);
+        router.push(`/verify-otp?email=${encodeURIComponent(data.email)}`);
+      }
     } finally {
       setIsLoading(false);
     }

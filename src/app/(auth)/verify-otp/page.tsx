@@ -1,21 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import { Loader2, CheckCircle2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { registerSchema, type RegisterForm } from "@/schemas/auth.schema";
+import {
+  otpVerificationSchema,
+  type OtpVerificationForm,
+} from "@/schemas/auth.schema";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Loader2, CheckCircle2 } from "lucide-react";
 
-export default function RegisterPage() {
-  const { signUp } = useAuth();
+export default function VerifyOtpPage() {
+  const { verifyOtp, signIn } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const defaultEmail = searchParams?.get("email") || "";
 
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -24,25 +29,28 @@ export default function RegisterPage() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<RegisterForm>({ resolver: zodResolver(registerSchema) });
+  } = useForm<OtpVerificationForm>({
+    resolver: zodResolver(otpVerificationSchema),
+  });
 
-  const onSubmit = async (data: RegisterForm) => {
+  useEffect(() => {
+    const pending = sessionStorage.getItem("pending_password");
+    if (!pending && !defaultEmail) {
+      router.push("/register");
+    }
+  }, [defaultEmail, router]);
+
+  const onSubmit = async (data: OtpVerificationForm) => {
     setIsLoading(true);
     try {
-      await signUp({
-        firstName: data.firstName,
-        lastName: data.lastName,
-        email: data.email,
-        password: data.password,
-      });
-      sessionStorage.setItem("pending_password", data.password);
+      await verifyOtp(data.email, data.otp);
       setSuccess(true);
-      setTimeout(
-        () =>
-          router.push(`/verify-otp?email=${encodeURIComponent(data.email)}`),
-        900,
-      );
-    } catch (err) {
+      const pendingPassword = sessionStorage.getItem("pending_password") || "";
+      if (pendingPassword) {
+        await signIn(data.email, pendingPassword);
+        sessionStorage.removeItem("pending_password");
+      }
+      setTimeout(() => router.push("/dashboard"), 900);
     } finally {
       setIsLoading(false);
     }
@@ -62,11 +70,9 @@ export default function RegisterPage() {
               <div className="w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-center">
                 <CheckCircle2 className="w-7 h-7 text-emerald-400" />
               </div>
-              <p className="text-lg font-bold text-zinc-100">
-                Account created!
-              </p>
+              <p className="text-lg font-bold text-zinc-100">Verified!</p>
               <p className="text-sm text-zinc-500">
-                Check your email for the OTP to verify your account.
+                Redirecting to your dashboard…
               </p>
             </div>
           ) : (
@@ -89,10 +95,10 @@ export default function RegisterPage() {
                 </div>
 
                 <h1 className="text-2xl font-bold text-zinc-100 tracking-tight">
-                  Create account
+                  Verify OTP
                 </h1>
                 <p className="text-sm text-zinc-500 mt-1">
-                  Register to start using your workspace
+                  Enter the code sent to your email
                 </p>
               </div>
 
@@ -103,43 +109,14 @@ export default function RegisterPage() {
               >
                 <div className="space-y-1.5">
                   <Label className="text-xs font-medium text-zinc-400 uppercase tracking-widest">
-                    First name
-                  </Label>
-                  <Input
-                    {...register("firstName")}
-                    className="bg-zinc-800/60 border-zinc-700/60 text-zinc-100 placeholder:text-zinc-600 h-11 rounded-xl"
-                  />
-                  {errors.firstName && (
-                    <p className="text-xs text-red-400">
-                      {errors.firstName.message}
-                    </p>
-                  )}
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-medium text-zinc-400 uppercase tracking-widest">
-                    Last name
-                  </Label>
-                  <Input
-                    {...register("lastName")}
-                    className="bg-zinc-800/60 border-zinc-700/60 text-zinc-100 placeholder:text-zinc-600 h-11 rounded-xl"
-                  />
-                  {errors.lastName && (
-                    <p className="text-xs text-red-400">
-                      {errors.lastName.message}
-                    </p>
-                  )}
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-medium text-zinc-400 uppercase tracking-widest">
                     Email
                   </Label>
                   <Input
                     {...register("email")}
+                    defaultValue={defaultEmail}
                     type="email"
                     autoComplete="email"
-                    className="bg-zinc-800/60 border-zinc-700/60 text-zinc-100 placeholder:text-zinc-600 h-11 rounded-xl"
+                    className="bg-zinc-800/60 border-zinc-700/60 text-zinc-100 placeholder:text-zinc-600 focus-visible:ring-violet-500/40 focus-visible:border-violet-500/60 h-11 rounded-xl"
                   />
                   {errors.email && (
                     <p className="text-xs text-red-400">
@@ -150,49 +127,32 @@ export default function RegisterPage() {
 
                 <div className="space-y-1.5">
                   <Label className="text-xs font-medium text-zinc-400 uppercase tracking-widest">
-                    Password
+                    OTP
                   </Label>
                   <Input
-                    {...register("password")}
-                    type="password"
-                    autoComplete="new-password"
-                    className="bg-zinc-800/60 border-zinc-700/60 text-zinc-100 placeholder:text-zinc-600 h-11 rounded-xl"
+                    {...register("otp")}
+                    placeholder="6-digit code"
+                    inputMode="numeric"
+                    autoComplete="one-time-code"
+                    className="bg-zinc-800/60 border-zinc-700/60 text-zinc-100 placeholder:text-zinc-600 focus-visible:ring-violet-500/40 focus-visible:border-violet-500/60 h-11 rounded-xl"
                   />
-                  {errors.password && (
-                    <p className="text-xs text-red-400">
-                      {errors.password.message}
-                    </p>
-                  )}
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-medium text-zinc-400 uppercase tracking-widest">
-                    Confirm password
-                  </Label>
-                  <Input
-                    {...register("confirmPassword")}
-                    type="password"
-                    className="bg-zinc-800/60 border-zinc-700/60 text-zinc-100 placeholder:text-zinc-600 h-11 rounded-xl"
-                  />
-                  {errors.confirmPassword && (
-                    <p className="text-xs text-red-400">
-                      {errors.confirmPassword.message}
-                    </p>
+                  {errors.otp && (
+                    <p className="text-xs text-red-400">{errors.otp.message}</p>
                   )}
                 </div>
 
                 <Button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full h-11 rounded-xl mt-2 bg-linear-to-r from-violet-600 to-blue-600 text-white font-semibold shadow-lg transition-all duration-200 border-0"
+                  className="w-full h-11 rounded-xl mt-2 bg-linear-to-r from-violet-600 to-blue-600 hover:from-violet-500 hover:to-blue-500 text-white font-semibold shadow-lg shadow-violet-900/30 transition-all duration-200 border-0"
                 >
                   {isLoading ? (
                     <>
                       <Loader2 className="animate-spin w-4 h-4 mr-2" />
-                      Creating…
+                      Verifying…
                     </>
                   ) : (
-                    "Create account"
+                    "Verify OTP"
                   )}
                 </Button>
               </form>
@@ -220,6 +180,9 @@ export default function RegisterPage() {
             </>
           )}
         </div>
+        <p className="text-center text-xs text-zinc-700 mt-5">
+          Secure Subscription-Based Engineering Desktop Application
+        </p>
       </div>
     </div>
   );
