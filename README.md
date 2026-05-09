@@ -1,36 +1,105 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Krezona Frontend — Documentation (Quick Start)
 
-## Getting Started
+This document explains how to set up, run, and build the Next.js frontend for Krezona, and provides a short guide to the app structure and pages.
 
-First, run the development server:
+## Project Overview
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Framework: Next.js 16 (React 19)
+- Language: TypeScript
+- Styling: TailwindCSS + shadcn/ui
+- State: Zustand
+- Forms: react-hook-form + Zod
+- HTTP: Axios (configured in `src/lib/axios.ts`)
+
+## Environment
+
+Create `.env.local` in the project root with at least:
+
+```
+NEXT_PUBLIC_API_URL=http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+If you use different backend host/port, set `NEXT_PUBLIC_API_URL` to your backend URL (for Supabase/production set to production API URL).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Install & Run (Development)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+cd krezona-task-frontend
+npm install
+npm run dev
+```
 
-## Learn More
+- Local dev server default: `http://localhost:3001` (check terminal output)
+- Hot reload supported; edit code under `src/` and refresh.
 
-To learn more about Next.js, take a look at the following resources:
+## Build & Run (Production)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+# build
+npm run build
+# start production server
+npm run start
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+To deploy, use Vercel (recommended) or any Node host. Ensure `NEXT_PUBLIC_API_URL` is set in the deployment environment.
 
-## Deploy on Vercel
+## Key Files & Folders
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `src/app/` — Next.js app routes (login, register, verify-otp, dashboard, admin, projects)
+- `src/components/` — Reusable UI and feature components
+- `src/lib/axios.ts` — Axios instance; set base URL from `NEXT_PUBLIC_API_URL`
+- `src/services/` — API wrappers used by UI
+- `src/schemas/` — Zod schemas for form validation
+- `src/store/` — Zustand stores (auth state)
+- `src/hooks/` — Custom hooks for reuse (useAuth, useProjects, etc.)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Pages (Important)
+
+- `/auth/login` — Login page
+- `/auth/register` — Registration page (triggers OTP)
+- `/auth/verify-otp` — OTP verification
+- `/dashboard` — Role-aware dashboard
+- `/dashboard/admin/users` — Admin user management
+- `/dashboard/admin/subscriptions` — Admin subscription UI
+- `/dashboard/projects` — Projects list and CRUD
+
+## Connecting to Backend
+
+- Axios client reads `NEXT_PUBLIC_API_URL`. Ensure backend is running and accessible.
+- Authentication uses JWT: login returns token and app stores it (see `src/lib/axios.ts` and `src/store/auth.store.ts`).
+
+## Testing
+
+- Add unit tests with Jest + React Testing Library for components and Supertest/Jest for backend integration (optional)
+
+## Deployment (Vercel)
+
+1. Push to GitHub.
+2. Create a Vercel project and connect the repo.
+3. Set Environment Variable `NEXT_PUBLIC_API_URL` in Vercel to your backend URL.
+4. Deploy.
+
+## Troubleshooting
+
+- CORS error: Ensure backend CORS allows the frontend origin.
+- Auth issues: Confirm `NEXT_PUBLIC_API_URL` points to a running backend and that JWT secret/expiry match expected values on the server.
+- Dev server port: If conflict, change in `package.json` or set `PORT` env for Next.
+
+## Notes for Reviewers
+
+- UI components follow shadcn patterns in `src/components/ui`.
+- Business logic is kept in `src/services` and `src/hooks` to keep components thin.
+- To move docs or notes, add a `docs/` folder in this repo or centralize docs in the `krezona` root per your preference.
+
+## Next Steps (optional)
+
+- Add `FRONTEND_DOCS.md` to repository root `docs/` or include links in repo README.
+- Add simple unit tests for critical components (login, register, project form) to improve reliability.
+
+---
+
+If you want, I can:
+
+- Update `krezona-task-frontend/README.md` with this content, or
+- Create a `docs/` folder and copy `FRONTEND_DOCS.md` there and link it from README.
+  Which do you prefer?
