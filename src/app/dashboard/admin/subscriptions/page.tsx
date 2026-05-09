@@ -6,12 +6,11 @@ import { useAuthStore } from "@/store/auth.store";
 import { useSubscriptions } from "@/hooks/useSubscriptions";
 import { adminService } from "@/services/admin.service";
 import { SubscriptionResponse } from "@/services/subscription.service";
-import { User } from "@/types";
+import { AdminUser } from "@/types";
 import { SubscriptionsListCard } from "@/components/dashboard/subscriptions/SubscriptionsListCard";
 import { SubscriptionEditDialog } from "@/components/dashboard/subscriptions/SubscriptionEditDialog";
 import { SubscriptionDeleteDialog } from "@/components/dashboard/subscriptions/SubscriptionDeleteDialog";
 import { Button } from "@/components/ui/button";
-
 
 interface EditingSubscription {
   userId: string;
@@ -32,7 +31,7 @@ export default function AdminSubscriptionsPage() {
     remove,
   } = useSubscriptions(true);
 
-  const [allUsers, setAllUsers] = useState<User[]>([]);
+  const [allUsers, setAllUsers] = useState<AdminUser[]>([]);
   const [usersLoading, setUsersLoading] = useState(false);
   const [editing, setEditing] = useState<EditingSubscription | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<SubscriptionResponse | null>(

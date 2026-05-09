@@ -36,7 +36,7 @@ export function formatDate(dateString?: string) {
     }).format(date);
 }
 
-export function getFullName(user: { firstName?: string; lastName?: string; email?: string }) {
+export function getFullName(user: { firstName?: string | null; lastName?: string | null; email?: string }) {
     const name = [user.firstName, user.lastName].filter(Boolean).join(" ");
     return name || user.email || "Unknown";
 }

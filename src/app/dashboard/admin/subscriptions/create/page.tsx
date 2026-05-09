@@ -19,12 +19,12 @@ import {
 } from "@/components/ui/select";
 import { adminService } from "@/services/admin.service";
 import { subscriptionService } from "@/services/subscription.service";
-import { User } from "@/types";
+import { AdminUser } from "@/types";
 import { getFullName } from "@/components/dashboard/subscriptions/subscription-utils";
 
 export default function AdminCreateSubscriptionModal() {
   const router = useRouter();
-  const [allUsers, setAllUsers] = useState<User[]>([]);
+  const [allUsers, setAllUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
