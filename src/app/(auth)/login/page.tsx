@@ -68,6 +68,7 @@ export default function LoginPage() {
                       alt="Krezona logo"
                       width={16}
                       height={16}
+                      style={{ width: "auto", height: "auto" }}
                       className="dark:invert"
                     />
                   </div>
@@ -130,7 +131,7 @@ export default function LoginPage() {
                 <Button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full h-11 rounded-xl mt-2 bg-gradient-to-r from-violet-600 to-blue-600 hover:from-violet-500 hover:to-blue-500 text-white font-semibold shadow-lg shadow-violet-900/30 transition-all duration-200 border-0"
+                  className="w-full h-11 rounded-xl mt-2 bg-linear-to-r from-violet-600 to-blue-600 hover:from-violet-500 hover:to-blue-500 text-white font-semibold shadow-lg shadow-violet-900/30 transition-all duration-200 border-0"
                 >
                   {isLoading ? (
                     <>
