@@ -31,7 +31,7 @@ export default function LogsFilters({
             className={
               mode === it.k
                 ? "rounded-full bg-emerald-500 text-zinc-950 hover:bg-emerald-400"
-                : "rounded-full border-zinc-700 bg-zinc-950/40 text-zinc-100 hover:bg-zinc-900"
+                : "rounded-full border-zinc-700 bg-zinc-950/40 text-zinc-100 hover:bg-zinc-200"
             }
           >
             {it.l}

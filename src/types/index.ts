@@ -101,3 +101,14 @@ export interface AuthState {
   setUser: (user: User) => void;
   hasRole: (roles: Role[]) => boolean;
 }
+export interface SubscriptionCreateCardProps {
+  usersWithoutSubscription: User[];
+  isLoading: boolean;
+  selectedUserId: string | null;
+  selectedPlan: string;
+  isSaving: boolean;
+  onUserSelect: (userId: string) => void;
+  onPlanChange: (plan: string) => void;
+  onCreate: () => void;
+  onCancel: () => void;
+}

@@ -93,7 +93,7 @@ export default function UsersTable({
               <Button
                 asChild
                 variant="outline"
-                className="rounded-full border-zinc-700 bg-zinc-950/40 text-zinc-100 hover:bg-zinc-900"
+                className="rounded-full border-zinc-700 bg-zinc-950/40 text-zinc-100 hover:bg-zinc-200"
               >
                 <Link href="/dashboard/admin/subscriptions">
                   Manage <ArrowRight className="h-4 w-4" />

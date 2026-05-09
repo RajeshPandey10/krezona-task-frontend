@@ -1,6 +1,6 @@
 "use client";
 
-import {  Search} from "lucide-react";
+import { Search } from "lucide-react";
 import { useAuthStore } from "@/store/auth.store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,23 +38,15 @@ export function Header() {
     <header className="h-16 border-b border-zinc-800 bg-zinc-950 px-8 flex items-center justify-between">
       {/* Search */}
       <div className="flex-1 max-w-md">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 w-4 h-4" />
-          <Input
-            type="text"
-            placeholder="Search projects, documents..."
-            className="pl-10 bg-zinc-900 border-zinc-700 w-full focus-visible:ring-emerald-500"
-          />
-        </div>
+        <div className="relative"></div>
       </div>
 
       {/* Right Side */}
       <div className="flex items-center gap-6">
-        
         {/* User Profile */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="flex items-center gap-3 px-2">
+            <div className="flex items-center gap-2 cursor-pointer">
               <Avatar className="h-8 w-8 border border-zinc-700">
                 <AvatarFallback className="bg-emerald-600 text-white font-medium">
                   {getInitials(
@@ -68,11 +60,8 @@ export function Header() {
                 <p className="text-sm font-medium">
                   {user?.firstName || user?.email?.split("@")[0]}
                 </p>
-                <p className="text-xs text-zinc-500 capitalize">
-                  {getRoleLabel(user?.role)}
-                </p>
               </div>
-            </Button>
+            </div>
           </DropdownMenuTrigger>
         </DropdownMenu>
       </div>

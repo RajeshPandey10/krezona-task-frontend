@@ -5,6 +5,7 @@ import {
   subscriptionService,
   SubscriptionResponse,
 } from "@/services/subscription.service";
+import { useAuthStore } from "@/store/auth.store";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Zap, AlertTriangle, CheckCircle, Clock } from "lucide-react";
@@ -43,21 +44,38 @@ export function SubscriptionStatus({ userId }: SubscriptionStatusProps) {
   );
   const [isLoading, setIsLoading] = useState(true);
 
+  const authUser = useAuthStore((s) => s.user);
+
   useEffect(() => {
     const fetchSubscription = async () => {
       try {
-        const data = await subscriptionService.getByUserId(userId);
+        let data: SubscriptionResponse | null = null;
+
+        // If the requested userId is the authenticated user, use /subscriptions/me
+        if (authUser?.id && authUser.id === userId) {
+          try {
+            data = await subscriptionService.getMe();
+          } catch (err) {
+            // fallback to auth store subscription if available
+            data = (authUser as any).subscription || null;
+          }
+        } else {
+          data = await subscriptionService.getByUserId(userId);
+        }
+
         setSubscription(data);
       } catch (error) {
         console.error("Failed to fetch subscription:", error);
-        setSubscription(null);
+        setSubscription(
+          authUser ? (authUser as any).subscription || null : null,
+        );
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchSubscription();
-  }, [userId]);
+  }, [userId, authUser]);
 
   if (isLoading) {
     return (
@@ -95,7 +113,7 @@ export function SubscriptionStatus({ userId }: SubscriptionStatusProps) {
       className={`border-zinc-800 ${isExpired ? "bg-red-950/20" : "bg-zinc-900/80"}`}
     >
       <CardHeader className="flex flex-row items-center justify-between space-y-0">
-        <CardTitle className="text-lg">Subscription</CardTitle>
+        <CardTitle className="text-lg text-white">Subscription</CardTitle>
         {getStatusIcon(subscription)}
       </CardHeader>
       <CardContent className="space-y-4">

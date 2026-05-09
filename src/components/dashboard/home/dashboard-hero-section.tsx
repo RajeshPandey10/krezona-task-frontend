@@ -1,8 +1,6 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Settings, Users } from "lucide-react";
 import { User } from "@/types";
 
 type DashboardHeroSectionProps = {
@@ -67,38 +65,7 @@ export function DashboardHeroSection({
                 : "Track projects, coordinate your team, and keep civil engineering work moving from one focused workspace."}
             </p>
           </div>
-          <div className="flex flex-wrap gap-3">
-            {roleName === "ENGINEER" && (
-              <>
-                <Button className="gap-2 cursor-pointer rounded-full bg-emerald-500 px-5 text-zinc-950 hover:bg-emerald-400">
-                  <Plus className="h-4 w-4" />
-                  New Project
-                </Button>
-                <Button
-                  variant="outline"
-                  className="gap-2 cursor-pointer rounded-full border-zinc-700 bg-zinc-950/50 text-zinc-100 hover:bg-zinc-900"
-                >
-                  <Settings className="h-4 w-4" />
-                  Workspace Settings
-                </Button>
-              </>
-            )}
-            {roleName === "ADMIN" && (
-              <>
-                <Button className=" cursor-pointer gap-2 rounded-full bg-emerald-500 px-5 text-zinc-950 hover:bg-emerald-400">
-                  <Users className="h-4 w-4" />
-                  Manage Users
-                </Button>
-                <Button
-                  variant="outline"
-                  className=" cursor-pointer gap-2 rounded-full border-zinc-700 bg-zinc-950/50 text-zinc-100 hover:bg-zinc-900"
-                >
-                  <Settings className="h-4 w-4" />
-                  view logs
-                </Button>
-              </>
-            )}
-          </div>
+        
         </div>
 
         <Card className="w-full max-w-sm border-zinc-800 bg-zinc-950/80 backdrop-blur">

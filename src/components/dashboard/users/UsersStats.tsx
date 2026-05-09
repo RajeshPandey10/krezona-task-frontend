@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Users2, ShieldCheck, ShieldUser } from "lucide-react";
 
@@ -20,7 +19,7 @@ export default function UsersStats({
   ];
 
   return (
-    <div className="grid gap-3 sm:grid-cols-3 lg:min-w-[28rem]">
+    <div className="grid gap-3 sm:grid-cols-3 lg:min-w-md">
       {items.map(({ label, value, Icon }) => (
         <Card
           key={label}

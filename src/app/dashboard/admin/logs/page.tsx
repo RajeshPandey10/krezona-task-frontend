@@ -76,23 +76,8 @@ export default function AdminLogsPage() {
       <section className="relative overflow-hidden rounded-3xl border border-zinc-800 bg-linear-to-br from-zinc-950 via-zinc-900 to-emerald-950/40 p-8 shadow-2xl shadow-black/20">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(16,185,129,0.16),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.12),transparent_30%)]" />
         <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-2xl space-y-3">
-            <Badge className="w-fit border-emerald-500/30 bg-emerald-500/15 text-emerald-200 hover:bg-emerald-500/15">
-              system logs
-            </Badge>
-            <div className="space-y-2">
-              <h1 className="text-4xl font-semibold tracking-tight text-white md:text-5xl">
-                Login activity, clearly tracked.
-              </h1>
-              <p className="max-w-2xl text-base leading-7 text-zinc-300 md:text-lg">
-                Review successful and failed attempts, inspect the user agent or
-                IP address, and search the audit trail without leaving the
-                dashboard.
-              </p>
-            </div>
-          </div>
-
-          <div className="grid gap-3 sm:grid-cols-3 lg:min-w-[28rem]">
+         
+          <div className="grid gap-3 sm:grid-cols-3 justify-end">
             <LogsStats
               total={total}
               success={successCount}

@@ -32,7 +32,7 @@ export function SubscriptionsListCard({
   return (
     <Card className="border-zinc-800 bg-zinc-900/80 shadow-2xl shadow-black/20">
       <CardHeader className="border-b border-zinc-800/80">
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className="flex items-center gap-2 text-zinc-100">
           <Zap className="h-5 w-5 text-emerald-400" />
           Active Subscriptions ({subscriptions.length})
         </CardTitle>
@@ -90,7 +90,7 @@ export function SubscriptionsListCard({
                     size="sm"
                     variant="outline"
                     onClick={() => onEdit(sub)}
-                    className="h-9 border-zinc-700 hover:border-emerald-500/40"
+                    className="h-9 border-zinc-700 hover:bg-emerald-500/40"
                   >
                     Edit
                   </Button>
@@ -98,7 +98,7 @@ export function SubscriptionsListCard({
                     size="sm"
                     variant="outline"
                     onClick={() => onDelete(sub)}
-                    className="h-9 border-red-500/20 bg-red-500/10 text-red-300 hover:border-red-500/30 hover:bg-red-500/20"
+                    className="h-9 border-red-500/20 bg-red-500/10 text-red-300 hover:border-red-500/30 hover:bg-red-500/20 hover:text-white"
                   >
                     Remove
                   </Button>

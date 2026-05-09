@@ -73,7 +73,7 @@ export default function AdminCreateSubscriptionModal() {
       <div className="relative max-w-md w-full mx-4">
         <Card className="bg-white/5 border border-zinc-800">
           <CardHeader>
-            <CardTitle>Create Subscription</CardTitle>
+            <CardTitle className="text-gray-200">Create Subscription</CardTitle>
             <CardDescription>
               Add a subscription for a user (admin)
             </CardDescription>
@@ -93,12 +93,12 @@ export default function AdminCreateSubscriptionModal() {
                     value={selectedUserId || ""}
                     onValueChange={(v) => setSelectedUserId(v)}
                   >
-                    <SelectTrigger className="h-10 mt-2 rounded-lg border border-zinc-700 bg-zinc-950/60">
+                    <SelectTrigger className="h-10 cursor-pointer mt-2 rounded-lg border border-zinc-700 bg-zinc-950/60 text-white">
                       <SelectValue placeholder="Choose a user..." />
                     </SelectTrigger>
-                    <SelectContent className="bg-zinc-900 border-zinc-700">
+                    <SelectContent className="bg-zinc-950/60 text-white border-zinc-700">
                       {usersWithout.map((u) => (
-                        <SelectItem key={u.id} value={u.id}>
+                        <SelectItem className="cursor-pointer" key={u.id} value={u.id}>
                           {getFullName(u)}
                         </SelectItem>
                       ))}
@@ -109,13 +109,13 @@ export default function AdminCreateSubscriptionModal() {
                 <div>
                   <label className="text-sm text-zinc-300">Plan</label>
                   <Select value={plan} onValueChange={(v) => setPlan(v)}>
-                    <SelectTrigger className="h-10 mt-2 rounded-lg border border-zinc-700 bg-zinc-950/60">
+                    <SelectTrigger className="h-10 mt-2 rounded-lg border border-zinc-700 bg-zinc-950/60 text-white cursor-pointer">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-zinc-900 border-zinc-700">
-                      <SelectItem value="FREE_TRIAL">Free Trial</SelectItem>
-                      <SelectItem value="PROFESSIONAL">Professional</SelectItem>
-                      <SelectItem value="ENTERPRISE">Enterprise</SelectItem>
+                    <SelectContent className="bg-zinc-900 border-zinc-700 text-white cursor-pointer">
+                      <SelectItem className="cursor-pointer" value="FREE_TRIAL">Free Trial</SelectItem>
+                      <SelectItem className="cursor-pointer" value="PROFESSIONAL">Professional</SelectItem>
+                      <SelectItem className="cursor-pointer" value="ENTERPRISE">Enterprise</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -124,11 +124,11 @@ export default function AdminCreateSubscriptionModal() {
                   <Button
                     onClick={handleCreate}
                     disabled={isSaving || !selectedUserId}
-                    className="bg-emerald-500"
+                    className="bg-emerald-800 hover:bg-emerald-700"
                   >
                     {isSaving ? "Creating..." : "Create Subscription"}
                   </Button>
-                  <Button variant="outline" onClick={() => router.back()}>
+                  <Button className="hover:bg-red-800 bg-red-400"  onClick={() => router.back()}>
                     Cancel
                   </Button>
                 </div>

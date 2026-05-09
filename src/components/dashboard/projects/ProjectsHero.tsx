@@ -1,7 +1,5 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -13,8 +11,6 @@ type ProjectsHeroProps = {
 
 export function ProjectsHero({
   canCreate,
-  search,
-  setSearch,
 }: ProjectsHeroProps) {
   return (
     <section className="relative overflow-hidden rounded-3xl border border-zinc-800 bg-linear-to-br from-zinc-950 via-zinc-950 to-emerald-950/25 p-6 shadow-2xl shadow-black/30 md:p-8">
@@ -25,9 +21,9 @@ export function ProjectsHero({
             Project workspace
           </Badge>
           <div className="space-y-2">
-            {/* <h1 className="text-3xl font-semibold tracking-tight text-white md:text-5xl">
+            <h1 className="text-3xl font-semibold tracking-tight text-white md:text-5xl">
               Manage every project from one clean dashboard.
-            </h1> */}
+            </h1>
             <p className="max-w-2xl text-sm leading-7 text-zinc-300 md:text-base">
               View the full portfolio, keep the team aligned, and create or
               update project records without leaving the workspace.
@@ -38,7 +34,7 @@ export function ProjectsHero({
         {canCreate && (
           <Button
             asChild
-            className="h-11 rounded-xl bg-emerald-500 px-5 text-zinc-950 hover:bg-emerald-400"
+            className="h-11 rounded-xl bg-emerald-500 px-5 text-zinc-950 hover:text-gray-200"
           >
             <Link href="/dashboard/projects/new">
               <Plus className="mr-2 h-4 w-4" />

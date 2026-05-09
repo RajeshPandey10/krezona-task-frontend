@@ -30,14 +30,14 @@ export function SubscriptionDeleteDialog({
     >
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Remove Subscription</AlertDialogTitle>
+          <AlertDialogTitle>Deactivate Subscription</AlertDialogTitle>
           <AlertDialogDescription>
             This will remove the subscription for {deleteTarget?.user.email}.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={onConfirm}>Remove</AlertDialogAction>
+          <AlertDialogAction onClick={onConfirm}>Deactivate</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

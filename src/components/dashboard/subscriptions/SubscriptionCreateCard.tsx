@@ -15,21 +15,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { User } from "@/types";
+import { SubscriptionCreateCardProps, User } from "@/types";
 import { Plus } from "lucide-react";
 import { getFullName } from "./subscription-utils";
 
-interface SubscriptionCreateCardProps {
-  usersWithoutSubscription: User[];
-  isLoading: boolean;
-  selectedUserId: string | null;
-  selectedPlan: string;
-  isSaving: boolean;
-  onUserSelect: (userId: string) => void;
-  onPlanChange: (plan: string) => void;
-  onCreate: () => void;
-  onCancel: () => void;
-}
+
 
 export function SubscriptionCreateCard({
   usersWithoutSubscription,

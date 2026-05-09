@@ -72,7 +72,22 @@ export function useSubscriptions(isAdmin: boolean = false) {
             setIsLoading(false);
         }
     }, [isAdmin]);
-
+   const activate = useCallback(async (userId: string) => {
+        try {
+            setIsLoading(true);
+            setError(null);
+            await (isAdmin? subscriptionService.adminActivate(userId):subscriptionService.adminActivate(userId));
+            setSubscriptions((prev) => prev.filter((sub) => sub.userId !== userId));
+            
+        }
+        catch (err) {
+            const message = err instanceof Error ? err.message : "Failed to activate subscription";
+            setError(message);
+            throw err;
+        } finally {
+            setIsLoading(false);
+        }
+    }, [isAdmin]);
     const createForUser = useCallback(
         async (userId: string, createData: UpdateSubscriptionRequest) => {
             try {
@@ -101,5 +116,6 @@ export function useSubscriptions(isAdmin: boolean = false) {
         updateForUser,
         createForUser,
         remove,
+        activate,
     };
 }

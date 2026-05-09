@@ -20,16 +20,7 @@ function getFullName(user: AdminUser) {
   );
 }
 
-function getPlanLabel(plan?: SubscriptionPlan) {
-  if (!plan) return "No subscription";
-  return plan.replace(/_/g, " ").toLowerCase();
-}
 
-function getStatusLabel(user: AdminUser) {
-  if (!user.isVerified) return "Unverified";
-  if (!user.isActive) return "Inactive";
-  return "Active";
-}
 
 export default function AdminUsersPage() {
   const router = useRouter();
@@ -179,8 +170,8 @@ export default function AdminUsersPage() {
           <div className="p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Link href="/dashboard/admin/users/create">
-                <Button className="rounded-full bg-emerald-500 text-zinc-950 hover:bg-emerald-400">
-                  New user
+                <Button className="rounded-full bg-emerald-500 text-zinc-950 hover:bg-emerald-200">
+                  + New user
                 </Button>
               </Link>
               <div className="text-sm text-zinc-400">{users.length} users</div>

@@ -40,6 +40,11 @@ class SubscriptionService {
         return response.data;
     }
 
+    async getMe() {
+        const response = await axios.get<SubscriptionResponse>(`/subscriptions/me`);
+        return response.data;
+    }
+
 
     async updateForUser(userId: string, data: UpdateSubscriptionRequest) {
         const response = await axios.patch<SubscriptionResponse>(
@@ -51,7 +56,7 @@ class SubscriptionService {
 
 
     async remove(userId: string) {
-        const response = await axios.delete(`/subscriptions/${userId}`);
+        const response = await axios.patch(`/subscriptions/${userId}/deactivate`);
         return response.data;
     }
 
@@ -80,10 +85,13 @@ class SubscriptionService {
     }
 
     async adminRemove(userId: string) {
-        const response = await axios.delete(`/admin/subscriptions/${userId}`);
+        const response = await axios.patch(`/admin/subscriptions/${userId}/deactivate`);
         return response.data;
     }
-
+    async adminActivate(userId: string) {
+        const response = await axios.patch(`/admin/subscriptions/${userId}/activate`);
+        return response.data;
+    }
     async adminCreateForUser(userId: string, data: UpdateSubscriptionRequest) {
         const response = await axios.post<SubscriptionResponse>(`/admin/subscriptions/${userId}`, data);
         return response.data;
@@ -116,6 +124,8 @@ class SubscriptionService {
         }
         return subscription.status;
     }
+
+   
 }
 
 export const subscriptionService = new SubscriptionService();

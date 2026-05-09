@@ -121,9 +121,7 @@ export default function AdminSubscriptionsPage() {
     }
   };
 
-  const usersWithoutSubscription = allUsers.filter(
-    (u) => !subscriptions.find((s) => s.userId === u.id),
-  );
+ 
 
   return (
     <div className="space-y-6 text-zinc-100">
@@ -142,7 +140,7 @@ export default function AdminSubscriptionsPage() {
               onClick={() =>
                 router.push("/dashboard/admin/subscriptions/create")
               }
-              className="h-10"
+              className="h-10 bg-emerald-600 hover:bg-emerald-900"
             >
               Add Subscription
             </Button>
@@ -163,7 +161,7 @@ export default function AdminSubscriptionsPage() {
         onDelete={setDeleteTarget}
       />
 
-      {/* Create now handled in modal route: /dashboard/admin/subscriptions/create */}
+     
 
       <SubscriptionEditDialog
         editing={editing}

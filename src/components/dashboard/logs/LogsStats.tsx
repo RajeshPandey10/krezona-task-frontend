@@ -29,8 +29,8 @@ export default function LogsStats({
           key={label}
           className="border-zinc-800 bg-zinc-950/75 backdrop-blur"
         >
-          <CardContent className="flex items-center gap-3 p-4">
-            <div className="rounded-2xl bg-emerald-500/15 p-3 text-emerald-300">
+          <CardContent className="flex justify-center items-center gap-3 p-4">
+            <div className="rounded-2xl bg-emerald-500/15 p-3 text-emerald-300 ">
               <Icon className="h-5 w-5" />
             </div>
             <div>
