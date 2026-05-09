@@ -35,7 +35,7 @@ jobs:
           username: krezona@krezona.rajeshpandey10.com.np
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftp
-          local-dir: out/
+          
           exclude: |
             **/.git*
            
