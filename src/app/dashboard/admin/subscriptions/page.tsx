@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { useAuthStore } from "@/store/auth.store";
 import { useSubscriptions } from "@/hooks/useSubscriptions";
 import { adminService } from "@/services/admin.service";
@@ -29,6 +30,7 @@ export default function AdminSubscriptionsPage() {
     updateForUser,
     createForUser,
     remove,
+    activate,
   } = useSubscriptions(true);
 
   const [allUsers, setAllUsers] = useState<AdminUser[]>([]);
@@ -59,7 +61,10 @@ export default function AdminSubscriptionsPage() {
       const users = await adminService.getUsers();
       setAllUsers(users);
     } catch (error) {
+      const errorMsg =
+        error instanceof Error ? error.message : "Failed to load users";
       console.error("Failed to load users:", error);
+      toast.error(errorMsg);
     } finally {
       setUsersLoading(false);
     }
@@ -72,7 +77,7 @@ export default function AdminSubscriptionsPage() {
   if (isLoading && subscriptions.length === 0) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500" />
+        <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-emerald-500" />
       </div>
     );
   }
@@ -87,10 +92,35 @@ export default function AdminSubscriptionsPage() {
         expiresAt: editing.expiresAt,
       });
       setEditing(null);
+      toast.success("Subscription updated successfully");
     } catch (error) {
+      const errorMsg =
+        error instanceof Error
+          ? error.message
+          : "Failed to update subscription";
       console.error("Failed to update subscription:", error);
+      toast.error(errorMsg);
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleToggleStatus = async (subscription: SubscriptionResponse) => {
+    try {
+      if (subscription.status === "CANCELLED") {
+        await activate(subscription.userId);
+        toast.success("Subscription activated successfully");
+        return;
+      }
+
+      setDeleteTarget(subscription);
+    } catch (error) {
+      const errorMsg =
+        error instanceof Error
+          ? error.message
+          : "Failed to update subscription status";
+      console.error("Failed to update subscription status:", error);
+      toast.error(errorMsg);
     }
   };
 
@@ -99,8 +129,14 @@ export default function AdminSubscriptionsPage() {
     try {
       await remove(deleteTarget.userId);
       setDeleteTarget(null);
+      toast.success("Subscription deactivated successfully");
     } catch (error) {
+      const errorMsg =
+        error instanceof Error
+          ? error.message
+          : "Failed to deactivate subscription";
       console.error("Failed to delete subscription:", error);
+      toast.error(errorMsg);
     }
   };
 
@@ -114,14 +150,18 @@ export default function AdminSubscriptionsPage() {
       });
       setCreating(null);
       loadUsers();
+      toast.success("Subscription created successfully");
     } catch (error) {
+      const errorMsg =
+        error instanceof Error
+          ? error.message
+          : "Failed to create subscription";
       console.error("Failed to create subscription:", error);
+      toast.error(errorMsg);
     } finally {
       setIsSaving(false);
     }
   };
-
- 
 
   return (
     <div className="space-y-6 text-zinc-100">
@@ -131,7 +171,7 @@ export default function AdminSubscriptionsPage() {
             <h1 className="text-3xl font-bold text-white">
               Subscription Manager
             </h1>
-            <p className="text-zinc-400 mt-2">
+            <p className="mt-2 text-zinc-400">
               Manage user subscriptions and plans
             </p>
           </div>
@@ -158,10 +198,8 @@ export default function AdminSubscriptionsPage() {
             expiresAt: sub.expiresAt,
           })
         }
-        onDelete={setDeleteTarget}
+        onToggleStatus={handleToggleStatus}
       />
-
-     
 
       <SubscriptionEditDialog
         editing={editing}

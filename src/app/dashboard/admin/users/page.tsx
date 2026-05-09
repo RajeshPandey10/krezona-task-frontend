@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { toast } from "sonner";
 import { useAuthStore } from "@/store/auth.store";
 import { adminService } from "@/services/admin.service";
 import { AdminUser, SubscriptionPlan } from "@/types";
@@ -13,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Search, ArrowRight } from "lucide-react";
 import UsersStats from "@/components/dashboard/users/UsersStats";
 import UsersTable from "@/components/dashboard/users/UsersTable";
+import { UserDeleteDialog } from "@/components/dashboard/users/UserDeleteDialog";
 
 function getFullName(user: AdminUser) {
   return (
@@ -20,14 +22,13 @@ function getFullName(user: AdminUser) {
   );
 }
 
-
-
 export default function AdminUsersPage() {
   const router = useRouter();
   const { user, initialized } = useAuthStore();
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [creating, setCreating] = useState(false);
   const [newEmail, setNewEmail] = useState("");
   const [newFirst, setNewFirst] = useState("");
@@ -35,6 +36,7 @@ export default function AdminUsersPage() {
   const [newPass, setNewPass] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
+  const [deleteTarget, setDeleteTarget] = useState<AdminUser | null>(null);
 
   useEffect(() => {
     if (!initialized) return;
@@ -101,13 +103,28 @@ export default function AdminUsersPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Delete this user? This action cannot be undone.")) return;
+    const targetUser = users.find((u) => u.id === id);
+    if (targetUser) {
+      setDeleteTarget(targetUser);
+    }
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteTarget) return;
     try {
+      setIsDeleting(true);
       setError(null);
-      await adminService.deleteUser(id);
-      setUsers((s) => s.filter((u) => u.id !== id));
+      await adminService.deleteUser(deleteTarget.id);
+      setUsers((s) => s.filter((u) => u.id !== deleteTarget.id));
+      toast.success(`User ${deleteTarget.email} deleted successfully`);
+      setDeleteTarget(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete user");
+      const errorMsg =
+        err instanceof Error ? err.message : "Failed to delete user";
+      setError(errorMsg);
+      toast.error(errorMsg);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -197,6 +214,13 @@ export default function AdminUsersPage() {
           )}
         </CardContent>
       </Card>
+
+      <UserDeleteDialog
+        deleteTarget={deleteTarget}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setDeleteTarget(null)}
+        isDeleting={isDeleting}
+      />
     </div>
   );
 }

@@ -13,14 +13,23 @@ export function useLogs() {
     try {
       setIsLoading(true);
       setError(null);
-      const data = userId
-        ? await logsService.listByUserId(userId)
-        : await logsService.list();
+      let data: LoginLogEntry[] = [];
+
+      if (userId === "me") {
+        data = await logsService.listMe();
+      } else if (userId) {
+        data = await logsService.listByUserId(userId);
+      } else {
+        data = await logsService.list();
+      }
+
       setLogs(data);
       return data;
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to load logs";
       setError(message);
+      console.error("Failed to fetch logs:", err);
+      setLogs([]);
       throw err;
     } finally {
       setIsLoading(false);

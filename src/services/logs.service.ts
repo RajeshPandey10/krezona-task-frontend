@@ -13,4 +13,9 @@ export const logsService = {
     const { data } = await api.get<LoginLogEntry[]>(`/logs/${userId}`);
     return data;
   },
+
+  listMe: async () => {
+    const { data } = await api.get<LoginLogEntry[]>(`/logs/me`);
+    return data;
+  },
 };
