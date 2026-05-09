@@ -18,14 +18,12 @@ jobs:
 
       - name: ✨ Create .env
         run: |
-         
           echo "NEXT_PUBLIC_API_URL=https://krezona-task-backend.onrender.com" >> .env
-          
 
       - name: 📦 Install dependencies
         run: npm ci
 
-      - name: 🔨 Build and Export Next.js
+      - name: 🔨 Build Next.js
         run: npm run build
 
       - name: 📂 Deploy to cPanel via FTP
@@ -35,7 +33,9 @@ jobs:
           username: krezona@krezona.rajeshpandey10.com.np
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftp
-          
+
+          local-dir: ./out/
+          server-dir: ./
+
           exclude: |
             **/.git*
-           
