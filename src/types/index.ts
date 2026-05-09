@@ -10,7 +10,8 @@ export interface User {
   subscription?: {
     plan: SubscriptionPlan;
     expiresAt: string;
-    isActive: boolean;
+    status?: 'ACTIVE' | 'EXPIRED' | 'CANCELLED';
+    isActive?: boolean;
   };
 }
 
@@ -19,11 +20,25 @@ export interface Project {
   name: string;
   description?: string;
   type?: string;
-  status: 'ACTIVE' | 'COMPLETED' | 'ARCHIVED';
+  status?: 'ACTIVE' | 'COMPLETED' | 'ARCHIVED';
   creatorId: string;
   creator?: User;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface ProjectFormValues {
+  name: string;
+  type: string;
+  description?: string;
+}
+
+export interface AdminDashboardStats {
+  users: number;
+  projects: number;
+  subscriptions: number;
+  logs: number;
+  failedLogs: number;
 }
 
 export interface LoginResponse {
