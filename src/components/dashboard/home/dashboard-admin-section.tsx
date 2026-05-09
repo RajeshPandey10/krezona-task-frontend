@@ -1,8 +1,11 @@
+import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight } from "lucide-react";
 import { AdminDashboardStats } from "@/types";
 import { getAdminCards } from "@/constants/adminCard.contant";
+import { SubscriptionStatus } from "@/components/dashboard/subscription-status";
+import { useAuthStore } from "@/store/auth.store";
 
 type DashboardAdminSectionProps = {
   adminStats: AdminDashboardStats | null;
@@ -13,6 +16,7 @@ export function DashboardAdminSection({
   adminStats,
   adminStatsLoading,
 }: DashboardAdminSectionProps) {
+  const { user } = useAuthStore();
   const cards = getAdminCards(adminStats);
 
   return (
@@ -40,6 +44,12 @@ export function DashboardAdminSection({
       </section>
 
       <section className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        {user?.id && (
+          <div className="md:col-span-1">
+            <SubscriptionStatus userId={user.id} />
+          </div>
+        )}
+
         <Card className="border-zinc-800 bg-zinc-950/70">
           <CardHeader>
             <CardTitle className="text-xl text-white">System Stats</CardTitle>
@@ -82,19 +92,21 @@ export function DashboardAdminSection({
           </CardHeader>
           <CardContent className="space-y-3">
             {[
-              "View all users",
-              "Manage subscriptions",
-              "View system logs",
-              "System settings",
-            ].map((label) => (
-              <button
+              { label: "View all users", href: "/dashboard/admin/users" },
+              {
+                label: "Manage subscriptions",
+                href: "/dashboard/admin/subscriptions",
+              },
+              { label: "View system logs", href: "/dashboard/admin/logs" },
+            ].map(({ label, href }) => (
+              <Link
                 key={label}
-                type="button"
+                href={href}
                 className="flex w-full items-center justify-between rounded-2xl border border-zinc-800 bg-zinc-900/70 px-4 py-3 text-left text-sm text-zinc-200 transition hover:border-emerald-500/30 hover:bg-zinc-900"
               >
                 <span>{label}</span>
                 <ArrowRight className="h-4 w-4 text-zinc-500" />
-              </button>
+              </Link>
             ))}
           </CardContent>
         </Card>

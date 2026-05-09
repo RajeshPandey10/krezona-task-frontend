@@ -25,24 +25,16 @@ export function ProjectsHero({
             Project workspace
           </Badge>
           <div className="space-y-2">
-            <h1 className="text-3xl font-semibold tracking-tight text-white md:text-5xl">
+            {/* <h1 className="text-3xl font-semibold tracking-tight text-white md:text-5xl">
               Manage every project from one clean dashboard.
-            </h1>
+            </h1> */}
             <p className="max-w-2xl text-sm leading-7 text-zinc-300 md:text-base">
               View the full portfolio, keep the team aligned, and create or
               update project records without leaving the workspace.
             </p>
           </div>
         </div>
-        <div className="relative w-full lg:max-w-sm">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
-          <Input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by project, type, owner, or description"
-            className="h-11 rounded-xl border-zinc-700/70 bg-zinc-950/60 pl-10 text-zinc-100 placeholder:text-zinc-600 focus-visible:border-emerald-500/60 focus-visible:ring-emerald-500/30"
-          />
-        </div>
+       
         {canCreate && (
           <Button
             asChild

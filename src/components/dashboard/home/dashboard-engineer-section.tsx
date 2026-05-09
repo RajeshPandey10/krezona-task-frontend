@@ -2,8 +2,12 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { FolderOpen, LayoutGrid } from "lucide-react";
+import { SubscriptionStatus } from "@/components/dashboard/subscription-status";
+import { useAuthStore } from "@/store/auth.store";
 
 export function DashboardEngineerSection() {
+  const { user } = useAuthStore();
+
   return (
     <section className="grid gap-6">
       <div className="rounded-3xl border border-zinc-800 bg-linear-to-br from-zinc-950 via-zinc-950 to-emerald-950/25 p-6 shadow-2xl shadow-black/30 md:p-8">
@@ -31,8 +35,14 @@ export function DashboardEngineerSection() {
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card className="border-zinc-800 bg-zinc-900/80">
+      <div className="grid gap-4 md:grid-cols-3">
+        {user?.id && (
+          <div className="md:col-span-1">
+            <SubscriptionStatus userId={user.id} />
+          </div>
+        )}
+
+        <Card className="border-zinc-800 bg-zinc-900/80 md:col-span-2">
           <CardHeader>
             <CardTitle className="text-lg text-white">My projects</CardTitle>
           </CardHeader>

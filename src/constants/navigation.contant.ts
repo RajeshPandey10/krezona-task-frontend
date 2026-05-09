@@ -15,15 +15,15 @@ export const navigation = [
     roles: ['ADMIN', 'ENGINEER', 'VIEWER'] as Role[],
   },
   {
-    name: 'Subscription',
-    href: '/dashboard/subscription',
-    icon: CreditCard,
-    roles: ['ADMIN', 'ENGINEER', 'VIEWER'] as Role[],
-  },
-  {
     name: 'Users',
     href: '/dashboard/admin/users',
     icon: Users,
+    roles: ['ADMIN'] as Role[],
+  },
+  {
+    name: 'Subscriptions',
+    href: '/dashboard/admin/subscriptions',
+    icon: CreditCard,
     roles: ['ADMIN'] as Role[],
   },
   {
