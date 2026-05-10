@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Card,
@@ -10,7 +10,15 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { adminService } from "@/services/admin.service";
+import { RoleRecord } from "@/types";
 
 export default function AdminCreateUserModal() {
   const router = useRouter();
@@ -19,6 +27,27 @@ export default function AdminCreateUserModal() {
   const [lastName, setLastName] = useState("");
   const [password, setPassword] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [roles, setRoles] = useState<RoleRecord[]>([]);
+  const [roleId, setRoleId] = useState<string>("");
+
+  useEffect(() => {
+    const loadRoles = async () => {
+      try {
+        const data = await adminService.getRoles();
+        setRoles(data);
+        const viewerRole = data.find((item) => item.name === "VIEWER");
+        setRoleId(viewerRole?.id ?? data[0]?.id ?? "");
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    void loadRoles();
+  }, []);
+
+  const selectedRoleName = useMemo(() => {
+    return roles.find((item) => item.id === roleId)?.name ?? "VIEWER";
+  }, [roleId, roles]);
 
   const handleCreate = async () => {
     try {
@@ -28,6 +57,7 @@ export default function AdminCreateUserModal() {
         password,
         firstName: firstName || undefined,
         lastName: lastName || undefined,
+        roleId: roleId || undefined,
       } as any);
       router.push("/dashboard/admin/users");
     } catch (err) {
@@ -83,10 +113,29 @@ export default function AdminCreateUserModal() {
                 />
               </div>
 
+              <div>
+                <label className="text-sm text-zinc-300">Role</label>
+                <Select value={roleId} onValueChange={setRoleId}>
+                  <SelectTrigger className="mt-2 h-10 w-full rounded-lg border border-zinc-700 bg-zinc-950/60 text-zinc-100">
+                    <SelectValue placeholder="Choose role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {roles.map((item) => (
+                      <SelectItem key={item.id} value={item.id}>
+                        {item.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <div className="mt-2 text-xs text-zinc-500">
+                  Current selection: {selectedRoleName}
+                </div>
+              </div>
+
               <div className="flex gap-3 pt-2">
                 <Button
                   onClick={handleCreate}
-                  disabled={isSaving}
+                  disabled={isSaving || !roleId}
                   className="bg-emerald-500"
                 >
                   {isSaving ? "Creating..." : "Create User"}

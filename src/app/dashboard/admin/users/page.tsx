@@ -6,11 +6,18 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { useAuthStore } from "@/store/auth.store";
 import { adminService } from "@/services/admin.service";
-import { AdminUser, SubscriptionPlan } from "@/types";
+import { AdminUser, RoleRecord, SubscriptionPlan } from "@/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Search, ArrowRight } from "lucide-react";
 import UsersStats from "@/components/dashboard/users/UsersStats";
 import UsersTable from "@/components/dashboard/users/UsersTable";
@@ -34,6 +41,11 @@ export default function AdminUsersPage() {
   const [newFirst, setNewFirst] = useState("");
   const [newLast, setNewLast] = useState("");
   const [newPass, setNewPass] = useState("");
+  const [roles, setRoles] = useState<RoleRecord[]>([]);
+  const [editingRoleUser, setEditingRoleUser] = useState<AdminUser | null>(
+    null,
+  );
+  const [selectedRoleId, setSelectedRoleId] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState("");
   const [deleteTarget, setDeleteTarget] = useState<AdminUser | null>(null);
@@ -49,8 +61,12 @@ export default function AdminUsersPage() {
       try {
         setError(null);
         setIsLoading(true);
-        const data = await adminService.getUsers();
-        setUsers(data);
+        const [userData, roleData] = await Promise.all([
+          adminService.getUsers(),
+          adminService.getRoles(),
+        ]);
+        setUsers(userData);
+        setRoles(roleData);
       } catch (loadError) {
         setError(
           loadError instanceof Error
@@ -64,6 +80,11 @@ export default function AdminUsersPage() {
 
     void loadUsers();
   }, [initialized, user, router]);
+
+  useEffect(() => {
+    if (!editingRoleUser) return;
+    setSelectedRoleId(editingRoleUser.role?.id ?? "");
+  }, [editingRoleUser]);
 
   const filteredUsers = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -106,6 +127,36 @@ export default function AdminUsersPage() {
     const targetUser = users.find((u) => u.id === id);
     if (targetUser) {
       setDeleteTarget(targetUser);
+    }
+  };
+
+  const handleEditRole = (targetUser: AdminUser) => {
+    setEditingRoleUser(targetUser);
+  };
+
+  const handleSaveRole = async () => {
+    if (!editingRoleUser || !selectedRoleId) return;
+
+    try {
+      setIsSaving(true);
+      setError(null);
+      const updated = await adminService.updateUserRole(editingRoleUser.id, {
+        roleId: selectedRoleId,
+      });
+      setUsers((items) =>
+        items.map((item) => (item.id === updated.id ? updated : item)),
+      );
+      toast.success(`Role updated for ${updated.email}`);
+      setEditingRoleUser(null);
+    } catch (saveError) {
+      const errorMsg =
+        saveError instanceof Error
+          ? saveError.message
+          : "Failed to update role";
+      setError(errorMsg);
+      toast.error(errorMsg);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -210,10 +261,68 @@ export default function AdminUsersPage() {
               No users match the current search.
             </div>
           ) : (
-            <UsersTable users={filteredUsers} onDelete={handleDelete} />
+            <UsersTable
+              users={filteredUsers}
+              onDelete={handleDelete}
+              onEditRole={handleEditRole}
+            />
           )}
         </CardContent>
       </Card>
+
+      {editingRoleUser ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setEditingRoleUser(null)}
+          />
+          <div className="relative w-full max-w-md rounded-3xl border border-zinc-800 bg-zinc-950 p-6 shadow-2xl shadow-black/40">
+            <div className="space-y-2">
+              <CardTitle className="text-2xl text-white">Change role</CardTitle>
+              <p className="text-sm text-zinc-400">
+                {getFullName(editingRoleUser)}
+              </p>
+            </div>
+            <div className="mt-6 space-y-4">
+              <div>
+                <label className="text-sm text-zinc-300">Role</label>
+                <Select
+                  value={selectedRoleId}
+                  onValueChange={setSelectedRoleId}
+                >
+                  <SelectTrigger className="mt-2 h-11 w-full rounded-2xl border-zinc-700/70 bg-zinc-950/60 text-zinc-100">
+                    <SelectValue placeholder="Choose role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {roles.map((item) => (
+                      <SelectItem key={item.id} value={item.id}>
+                        {item.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <Button
+                  onClick={handleSaveRole}
+                  disabled={isSaving || !selectedRoleId}
+                  className="rounded-full bg-emerald-500 text-zinc-950 hover:bg-emerald-400"
+                >
+                  {isSaving ? "Saving..." : "Save role"}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setEditingRoleUser(null)}
+                  className="rounded-full border-zinc-700 bg-zinc-950/40 text-zinc-100 hover:bg-zinc-200"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       <UserDeleteDialog
         deleteTarget={deleteTarget}

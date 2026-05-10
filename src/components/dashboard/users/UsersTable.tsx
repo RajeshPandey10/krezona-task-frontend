@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Trash2 } from "lucide-react";
+import { ArrowRight, Pencil, Trash2 } from "lucide-react";
 import { AdminUser, SubscriptionPlan } from "@/types";
 
 function getFullName(user: AdminUser) {
@@ -27,9 +27,11 @@ function getStatusLabel(user: AdminUser) {
 export default function UsersTable({
   users,
   onDelete,
+  onEditRole,
 }: {
   users: AdminUser[];
   onDelete: (id: string) => void;
+  onEditRole: (user: AdminUser) => void;
 }) {
   if (!users.length) {
     return (
@@ -90,6 +92,13 @@ export default function UsersTable({
               </Badge>
             </div>
             <div className="col-span-2 flex items-start gap-2">
+              <Button
+                onClick={() => onEditRole(item)}
+                variant="outline"
+                className="rounded-full border-zinc-700 bg-zinc-950/40 text-zinc-100 hover:bg-zinc-200"
+              >
+                Role <Pencil className="h-4 w-4" />
+              </Button>
               <Button
                 asChild
                 variant="outline"
