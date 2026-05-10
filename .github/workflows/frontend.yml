@@ -26,6 +26,12 @@ jobs:
       - name: 🔨 Build Next.js (static export via next.config.js)
         run: npm run build
 
+      - name: 🔎 Verify static export output
+        run: |
+          pwd
+          ls -la
+          ls -la out
+
       - name: 📂 Deploy to cPanel via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.0.0
         with:
@@ -33,7 +39,7 @@ jobs:
           username: krezona@krezona.rajeshpandey10.com.np
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftp
-          local-dir: out/
+          local-dir: ./out
           exclude: |
             **/.git*
             **/.github*
