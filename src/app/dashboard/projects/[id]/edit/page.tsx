@@ -13,17 +13,21 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+function canManageProject(project: Project, userId?: string, role?: string) {
+  if (role === "ADMIN") return true;
+  if (!userId) return false;
+
+  return project.creatorId === userId || project.creator?.id === userId;
+}
+
 export default function EditProjectPage() {
   const router = useRouter();
   const params = useParams<{ id: string }>();
   const projectId = params?.id;
-  const { user } = useAuthStore();
+  const { user, initialized } = useAuthStore();
   const { getProject, updateProject, isLoading, isSaving } = useProjects(false);
   const [project, setProject] = useState<Project | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
-
-  const canManageProject =
-    user?.role === "ADMIN" || (project ? project.creatorId === user?.id : true);
 
   useEffect(() => {
     const loadProject = async () => {
@@ -42,7 +46,7 @@ export default function EditProjectPage() {
     void loadProject();
   }, [projectId]);
 
-  if (isLoading) {
+  if (!initialized || isLoading) {
     return (
       <Card className="border-zinc-800 bg-zinc-900/80 shadow-2xl shadow-black/20">
         <CardContent className="p-8">
@@ -57,6 +61,9 @@ export default function EditProjectPage() {
       </Card>
     );
   }
+
+  const canManageCurrentProject =
+    project && canManageProject(project, user?.id, user?.role);
 
   if (loadError || !project) {
     return (
@@ -73,7 +80,7 @@ export default function EditProjectPage() {
     );
   }
 
-  if (!canManageProject) {
+  if (!canManageCurrentProject) {
     return (
       <Card className="mx-auto mt-10 max-w-2xl border-zinc-800 bg-zinc-900/80 text-zinc-100 shadow-2xl shadow-black/20">
         <CardContent className="p-8 text-center">

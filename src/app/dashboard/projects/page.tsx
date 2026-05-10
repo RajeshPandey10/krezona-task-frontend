@@ -29,6 +29,13 @@ function getProjectOwner(project: Project) {
   );
 }
 
+function canManageProject(project: Project, userId?: string, role?: string) {
+  if (role === "ADMIN") return true;
+  if (!userId) return false;
+
+  return project.creatorId === userId || project.creator?.id === userId;
+}
+
 export default function ProjectsPage() {
   const { user } = useAuthStore();
   const { projects, isLoading, deleteProject } = useProjects();
@@ -105,8 +112,11 @@ export default function ProjectsPage() {
           ) : filteredProjects.length ? (
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               {filteredProjects.map((project) => {
-                const canManage =
-                  user?.role === "ADMIN" || project.creatorId === user?.id;
+                const canManage = canManageProject(
+                  project,
+                  user?.id,
+                  user?.role,
+                );
                 return (
                   <ProjectCard
                     key={project.id}
