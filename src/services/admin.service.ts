@@ -41,4 +41,19 @@ export const adminService = {
         const { data } = await api.delete(`/admin/users/${id}`);
         return data;
     },
+
+    createRole: async (payload: { name: string; description?: string }) => {
+        const { data } = await api.post<RoleRecord>(`/admin/roles`, payload);
+        return data;
+    },
+
+    updateRole: async (id: string, payload: { name?: string; description?: string }) => {
+        const { data } = await api.patch<RoleRecord>(`/admin/roles/${id}`, payload);
+        return data;
+    },
+
+    deleteRole: async (id: string) => {
+        const { data } = await api.delete(`/admin/roles/${id}`);
+        return data;
+    },
 };
