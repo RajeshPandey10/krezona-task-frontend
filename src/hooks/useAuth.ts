@@ -6,7 +6,7 @@ import api from '@/lib/axios';
 import { toast } from 'sonner';
 
 export const useAuth = () => {
-  const { login, logout, setUser } = useAuthStore();
+  const { login, logout } = useAuthStore();
 
   const signIn = async (email: string, password: string) => {
     try {
@@ -14,7 +14,7 @@ export const useAuth = () => {
       const token = response?.access_token || response?.token || response?.accessToken || response?.data?.access_token;
       const user = response?.user || response?.data || response;
       if (token) {
-        localStorage.setItem('access_token', token);
+
         api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       }
       login(token, user as any);
@@ -54,7 +54,13 @@ export const useAuth = () => {
     signIn,
     signUp,
     verifyOtp,
-    logout,
+    logout: async () => {
+      try {
+        await authService.logout();
+      } catch (err) {
+      }
+      logout();
+    },
     getProfile: authService.getProfile,
   };
 };

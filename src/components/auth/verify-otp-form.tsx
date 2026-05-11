@@ -34,8 +34,7 @@ export function VerifyOtpForm() {
   });
 
   useEffect(() => {
-    const pending = sessionStorage.getItem("pending_password");
-    if (!pending && !defaultEmail) {
+    if (!defaultEmail) {
       router.push("/register");
     }
   }, [defaultEmail, router]);
@@ -45,12 +44,11 @@ export function VerifyOtpForm() {
     try {
       await verifyOtp(data.email, data.otp);
       setSuccess(true);
-      const pendingPassword = sessionStorage.getItem("pending_password") || "";
-      if (pendingPassword) {
-        await signIn(data.email, pendingPassword);
-        sessionStorage.removeItem("pending_password");
-      }
-      setTimeout(() => router.push("/dashboard"), 900);
+
+      setTimeout(
+        () => router.push(`/login?email=${encodeURIComponent(data.email)}`),
+        900,
+      );
     } finally {
       setIsLoading(false);
     }

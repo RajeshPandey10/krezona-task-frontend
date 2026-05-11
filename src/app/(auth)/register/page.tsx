@@ -35,7 +35,6 @@ export default function RegisterPage() {
         email: data.email,
         password: data.password,
       });
-      sessionStorage.setItem("pending_password", data.password);
       setSuccess(true);
       setTimeout(
         () =>

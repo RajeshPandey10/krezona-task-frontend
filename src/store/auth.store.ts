@@ -1,6 +1,5 @@
 import { AuthState } from "@/types";
 import { create } from "zustand";
-import api from "@/lib/axios";
 
 function normalizeRole(role: unknown) {
     if (typeof role === 'string') return role;
@@ -24,17 +23,15 @@ export const useAuthStore = create<AuthState & { initialized?: boolean }>((set, 
     isLoading: true,
     initialized: false,
     login: (token, user) => {
+
         if (token) {
-            localStorage.setItem('access_token', token);
-            api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
             set({ token, user: normalizeUser(user), isLoading: false, initialized: true });
         } else {
             set({ token: null, user: normalizeUser(user), isLoading: false, initialized: true });
         }
     },
     logout: () => {
-        localStorage.removeItem('access_token');
-        api.defaults.headers.common['Authorization'] = undefined;
+
         set({ token: null, user: null, isLoading: false, initialized: true });
         window.location.href = '/login';
     },

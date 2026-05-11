@@ -37,7 +37,6 @@ export default function LoginPage() {
     } catch (err) {
       const message = (err as any)?.response?.data?.message || "";
       if (message.toLowerCase().includes("verify your email")) {
-        sessionStorage.setItem("pending_password", data.password);
         router.push(`/verify-otp?email=${encodeURIComponent(data.email)}`);
       }
     } finally {

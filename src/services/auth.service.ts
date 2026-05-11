@@ -22,12 +22,18 @@ export const authService = {
     return data;
   },
 
+  refresh: async () => {
+    const { data } = await api.post('/auth/refresh');
+    return data;
+  },
+
   getProfile: async () => {
     const { data } = await api.get('/users/me');
     return data;
   },
 
-  logout: () => {
-    localStorage.removeItem('access_token');
+  logout: async () => {
+    await api.post('/auth/logout');
+    return { success: true };
   },
 };
